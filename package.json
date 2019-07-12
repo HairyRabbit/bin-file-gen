@@ -1,6 +1,6 @@
 {
   "name": "binit",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "description": "Generate bin file for NodeJs scripts",
   "main": "index.js",
   "bin": "./bin/binit",
