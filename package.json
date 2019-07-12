@@ -1,0 +1,31 @@
+{
+  "name": "binit",
+  "version": "1.0.0",
+  "description": "Generate bin file for NodeJs scripts",
+  "main": "index.js",
+  "bin": "./bin/binit",
+  "dependencies": {
+    "read-pkg-up": "^6.0.0",
+    "tslib": "^1.10.0",
+    "yargs": "^13.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^12.6.2",
+    "@types/yargs": "^13.0.0",
+    "typescript": "^3.5.3"
+  },
+  "scripts": {
+    "start": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HairyRabbit/binit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HairyRabbit/binit/issues"
+  },
+  "homepage": "https://github.com/HairyRabbit/binit#readme"
+}
