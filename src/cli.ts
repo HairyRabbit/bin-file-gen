@@ -32,6 +32,5 @@ export default function main() {
     .help()
     .argv
 
-  console.log(args)
   gen(args)
 }
