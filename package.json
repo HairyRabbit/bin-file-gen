@@ -1,6 +1,6 @@
 {
   "name": "bin-file-gen",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Generate bin file for NodeJs scripts",
   "main": "index.js",
   "bin": "./bin/bin-file-gen",
