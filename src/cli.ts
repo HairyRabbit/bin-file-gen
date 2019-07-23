@@ -8,7 +8,7 @@ export default function main() {
     .option(`output`, {
       alias: `o`,
       type: `string`,
-      describe: `Output file path`
+      describe: `Output file path, ignore when package.json has "bin" field`
     })
     .option(`project`, {
       alias: `p`,
@@ -16,15 +16,22 @@ export default function main() {
       describe: `Project path, used for compute script path`
     })
     .options(`dryrun`, {
-      type: 'boolean',
+      type: `boolean`,
       describe: `Dryrun`
     })
     .options(`silent`, {
-      type: 'boolean',
+      type: `boolean`,
+      alias: `q`,
       describe: `Keep slient, not print any info to stdout`,
       default: false
     })
+    .options(`yes`, {
+      type: `boolean`,
+      alias: `y`,
+      describe: `Skip Y/n questions`
+    })
     .help()
+    .alias('help', 'h')
     .argv
 
   gen(args)

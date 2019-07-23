@@ -5,12 +5,14 @@
   "main": "index.js",
   "bin": "./bin/bin-file-gen",
   "dependencies": {
+    "prompts": "^2.1.0",
     "read-pkg-up": "^6.0.0",
     "tslib": "^1.10.0",
     "yargs": "^13.2.4"
   },
   "devDependencies": {
     "@types/node": "^12.6.2",
+    "@types/prompts": "^2.0.1",
     "@types/yargs": "^13.0.0",
     "typescript": "^3.5.3"
   },

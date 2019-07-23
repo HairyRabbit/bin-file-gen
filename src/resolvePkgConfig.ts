@@ -18,13 +18,12 @@ export default function resolvePKGConfig(pkg: Package, output: string, project: 
   const opts = { ...DEFAULT_RESOLVEOPTIONS, ...options }
   const { report } = opts
   const { bin, name } = pkg
-  const outputPath: string = path.resolve(output, name)
-
+  
   if(undefined === bin) {
     if(report) reportWarning(name)
     return {
       name, 
-      path: outputPath
+      path: output
     }
   } else if(`string` === typeof bin) {
     return {
@@ -39,7 +38,7 @@ export default function resolvePKGConfig(pkg: Package, output: string, project: 
         if(report) reportWarning(name)
         return { 
           name,
-          path: outputPath
+          path: output
         }
       }
       case 1: {
@@ -48,7 +47,7 @@ export default function resolvePKGConfig(pkg: Package, output: string, project: 
 
         return {
           name: binDeclName,
-          path: '' === binPath.trim() ? outputPath : path.isAbsolute(binPath) ? binPath : path.resolve(project, binPath)
+          path: '' === binPath.trim() ? output : path.isAbsolute(binPath) ? binPath : path.resolve(project, binPath)
         }
 
       }

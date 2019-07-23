@@ -5,10 +5,10 @@ import resolvePkgConfig from './resolvePkgConfig'
 import resolveTsConfig from './resolveTsConfig'
 import createBinFile, { BinFile } from './createBinFile'
 
-
 type Options = {
   project: string
   silent: boolean
+  output: string
 } & BinFile & GenerateOptions
 
 const DEFAULT_OUTPUT: string = 'bin'
@@ -20,15 +20,15 @@ function getOutputAndScript(project: string, output: string, script: string): [ 
   const absoluteFilePath: string = path.isAbsolute(output) ? output : path.resolve(absoluteProjectPath, output)
   const dir: string = path.dirname(absoluteFilePath)
   const relativePath: string = path.relative(dir, absoluteProjectPath)
-  return [ dir, path.posix.join(relativePath, script) ]
+  return [ absoluteFilePath, path.join(relativePath, script).replace(/\\/g, '/') ]
 }
 
-async function main(options: Partial<Options & GenerateOptions> = {}): Promise<void> {
+async function main(options: Partial<Options> = {}): Promise<void> {
   const result = await readPkgUp({ normalize: true })
   if(undefined === result) throw makePackageJSONNotFoundError()
-  const name = result.package.name
+  const name = getPackageName(result.package.name)
   const project: string = options.project || resolveTsConfig(DEFAULT_PROJECT)
-  const file: string = options.file || DEFAULT_OUTPUT + '/' + name
+  const file: string = options.output || DEFAULT_OUTPUT + '/' + name
   const [ output, script ]: [ string, string ] = getOutputAndScript(project, file, options.script || DEFAULT_SCRIPT)
   const { name: fileName, path: filePath }: NameResolveResult = resolvePkgConfig(result.package, output, project, { report: !options.silent })
   const binFile: BinFile = createBinFile(fileName, filePath, script)
@@ -37,6 +37,11 @@ async function main(options: Partial<Options & GenerateOptions> = {}): Promise<v
     silent: options.silent,
     dryrun: options.dryrun
   })
+}
+
+function getPackageName(pkgName: string) {
+  if(pkgName.startsWith(`@`)) return pkgName.split(`/`)[1]
+  return pkgName
 }
 
 export interface NameResolveResult {

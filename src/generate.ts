@@ -1,28 +1,46 @@
-import fs from 'fs'
-import path from 'path'
+import * as fs from 'fs'
+import * as path from 'path'
+import prompts from 'prompts'
+
 import { BinFile } from './createBinFile'
 
 export interface Options {
   dryrun: boolean
   silent: boolean
+  yes: boolean
 }
 
 const DEFAULT_OPTIONS: Options = {
   dryrun: false,
-  silent: false
+  silent: false,
+  yes: false
 }
 
-export function generate(binFile: BinFile, options: Partial<Options> = {}) {
+export async function generate(binFile: BinFile, options: Partial<Options> = {}) {
   const opts: Options = { ...DEFAULT_OPTIONS, ...options }
   const {
     dryrun,
-    silent
+    silent,
+    yes
   } = opts
 
   const result: string = render(binFile)
 
   if(!silent) report(binFile, result)
   if(dryrun) return
+
+  if(!silent && !yes) {
+    const res = await prompts({
+      type: 'confirm',
+      name: 'answer',
+      message: `[bin-file-gen] Confirm?`
+    })
+
+    if(false === res.answer) {
+      console.log(`\n[bin-file-gen] Canceled`)
+      return
+    }
+  }
 
   const dir: string = path.dirname(binFile.file)
   fs.mkdirSync(dir, { recursive: true })
@@ -39,7 +57,7 @@ require('${binFile.script}')['${binFile.export}'](${binFile.args})
 }
 
 function report(binFile: BinFile, result: string): void {
-  console.log(`[bin-file-gen] Summary:`)
+  console.log(`\n[bin-file-gen] Summary:`)
   console.log()
   console.log(`  - Name:     ${binFile.name}`)
   console.log(`  - File:     ${binFile.file}`)
