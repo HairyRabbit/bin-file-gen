@@ -1,55 +1,59 @@
 import fs from 'fs'
 import path from 'path'
+import { BinFile } from './createBinFile'
 
 export interface Options {
   dryrun: boolean
-  shebang: string
-  template: string
-  entry: string
-  output: string
-  args: string
+  silent: boolean
 }
-
-
-const DEFAULT_SHEBANG: string = `#!/usr/bin/env node`
-
-const DEFAULT_TEMPLATE: string = `require('$entry').default($args)`
 
 const DEFAULT_OPTIONS: Options = {
   dryrun: false,
-  shebang: DEFAULT_SHEBANG,
-  template: DEFAULT_TEMPLATE,
-  entry: './cli',
-  output: './bin',
-  args: `process.argv.slice(2)`
+  silent: false
 }
 
-export function generate(options: Partial<Options> = {}) {
-  const { 
+export function generate(binFile: BinFile, options: Partial<Options> = {}) {
+  const opts: Options = { ...DEFAULT_OPTIONS, ...options }
+  const {
     dryrun,
-    shebang,
-    template,
-    entry,
-    output,
-    args
-  } = { ...DEFAULT_OPTIONS, ...options }
+    silent
+  } = opts
 
-  const rendered: string = render(template, entry, args)
-  const tpl: string = [shebang, rendered].join('\n')
+  const result: string = render(binFile)
 
-  console.log(`[binit] Generate at "${output}":\n`)
-  console.log(tpl)
-
+  if(!silent) report(binFile, result)
   if(dryrun) return
 
-  const dir: string = path.dirname(output)
+  const dir: string = path.dirname(binFile.file)
   fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(output, tpl, `utf-8`)
-  console.log(`\n[binit] Bin file created successful`)
+  fs.writeFileSync(binFile.file, result, `utf-8`)
+  if(!silent) console.log(`\n[bin-file-gen] Bin file created successful`)
 }
 
-function render(tpl: string, entry: string, args: string): string {
-  return tpl
-    .replace(`$entry`, entry)
-    .replace(`$args`, args)
+function render(binFile: BinFile): string {
+  return `\
+${makeShebangLine(binFile)}
+
+require('${binFile.script}')['${binFile.export}'](${binFile.args})
+`
+}
+
+function report(binFile: BinFile, result: string): void {
+  console.log(`[bin-file-gen] Summary:`)
+  console.log()
+  console.log(`  - Name:     ${binFile.name}`)
+  console.log(`  - File:     ${binFile.file}`)
+  console.log(`  - Shebang:  ${makeShebangLine(binFile)}`)
+  console.log(`  - Script:   ${binFile.script}`)
+  console.log(`  - Export:   ${binFile.export}`)
+  console.log(`  - Argument: ${binFile.args}`)
+  console.log(`  - Template:\n`)
+  console.log(`\`\`\``)
+  console.log(result)
+  console.log(`\`\`\``)
+  console.log()
+}
+
+function makeShebangLine(binFile: BinFile): string {
+  return `#!${binFile.bin} ${binFile.program}`
 }
