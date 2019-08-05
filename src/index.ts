@@ -38,6 +38,7 @@ async function main(options: Partial<Options> = {}): Promise<void> {
   generate(binFile, {
     silent: Boolean(options.silent),
     dryrun: Boolean(options.dryrun),
+    yes: Boolean(options.yes),
     root,
     ts: Boolean(ts)
   })

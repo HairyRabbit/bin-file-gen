@@ -15,17 +15,17 @@ export default function main() {
       type: `string`,
       describe: `Project path, used for compute script path`
     })
-    .options(`dryrun`, {
+    .option(`dryrun`, {
       type: `boolean`,
       describe: `Dryrun`
     })
-    .options(`silent`, {
+    .option(`silent`, {
       type: `boolean`,
       alias: `q`,
       describe: `Keep slient, not print any info to stdout`,
       default: false
     })
-    .options(`yes`, {
+    .option(`yes`, {
       type: `boolean`,
       alias: `y`,
       describe: `Skip Y/n questions`
