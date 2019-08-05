@@ -2,8 +2,8 @@ import * as path from 'path'
 
 type TS = typeof import('typescript')
 
-export default function resolveTsConfig(defaultValue: string): string {
-  const ts: TS | null = tryToRequireTS()
+export default function resolveTsConfig(root: string, defaultValue: string): string {
+  const ts: TS | null = tryToRequireTS(root)
   if(null === ts) return defaultValue
   const config = readConfig(ts)
   if(null === config) return defaultValue
@@ -39,19 +39,24 @@ function combineErrorMessageText(msg: string | import('typescript').DiagnosticMe
   return acc
 }
 
-function tryToRequireTS(): TS | null {
+function tryToRequireTS(root: string): TS | null {
+  const typescriptLibPath = path.resolve(root, 'node_modules', 'typescript')
   try {
-    return require('typescript')
+    return require(typescriptLibPath)
   } catch(e) {
-    // throw makeNoTypeScriptInstalledError()
+    reportTypescriptLibraryNotResolvedWarning(e, typescriptLibPath)
     return null
   }
 }
 
-// function makeNoTypeScriptInstalledError(): Error {
-//   return new Error(`The module "typescript" not required, do you forget to install it first?`)
-// }
-
 function makeConfigFileCanNotReadError(message: string): Error {
   return new Error(`config file read failed: \n${message}`)
+}
+
+function reportTypescriptLibraryNotResolvedWarning(error: Error, path: string): void {
+  console.warn(`\
+The typescript library not resolved at "${path}"
+
+${error.message}
+`)
 }

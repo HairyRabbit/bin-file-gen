@@ -26,8 +26,9 @@ function getOutputAndScript(project: string, output: string, script: string): [ 
 async function main(options: Partial<Options> = {}): Promise<void> {
   const result = await readPkgUp({ normalize: true })
   if(undefined === result) throw makePackageJSONNotFoundError()
+  const root = path.dirname(result.path)
   const name = getPackageName(result.package.name)
-  const project: string = options.project || resolveTsConfig(DEFAULT_PROJECT)
+  const project: string = options.project || resolveTsConfig(root, DEFAULT_PROJECT)
   const file: string = options.output || DEFAULT_OUTPUT + '/' + name
   const [ output, script ]: [ string, string ] = getOutputAndScript(project, file, options.script || DEFAULT_SCRIPT)
   const { name: fileName, path: filePath }: NameResolveResult = resolvePkgConfig(result.package, output, project, { report: !options.silent })
