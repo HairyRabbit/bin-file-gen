@@ -6,7 +6,7 @@
 
 _Generate bin file for NodeJs scripts, base on your package.json_
 
-_`npm i -D bin-file-gen`_
+_`npm i -g bin-file-gen`_
 
 </div>
 
@@ -17,6 +17,11 @@ _`npm i -D bin-file-gen`_
 $ bin-file-gen --dryrun
 
 [bin-file-gen] Summary:
+
+  - Root:     ./
+  - TSConfig: true
+  - DryRun:   false
+  - Ask:      false
 
   - Name:     bin-file-gen
   - File:     ./bin/bin-file-gen
